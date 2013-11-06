@@ -12,7 +12,7 @@ Unlike other languages, there is no one single style for programming
 in R. We list the important elements while refer the user to the
 following suggested materials.
 
-   Have meaningful names for your *varable*, *function*, and *script*
+* Have meaningful names for your *varable*, *function*, and *script*
 
 [Google's R Style
 Guide](http://google-styleguide.googlecode.com/svn/trunk/Rguide.xml)
@@ -42,8 +42,8 @@ R](https://github.com/yihui/roxygen2)
 In order for other users to quickly understand and debug your code if
 necessary, comment are necessary.
 
-A simple description such as **Perform data manipulation** or
-**Performing linear regression for prediction** should suffice. 
+A simple description such as `Perform data manipulation` or
+`Performing linear regression for prediction` should suffice. 
 
 The purpose is to tell the user what task is performed at each step.
 This allows people to skim through the script to understand the
@@ -60,7 +60,7 @@ understanding your work.
 ## Functions
 
 Each function should be in a seperate script, the function should be
-compact and efficient.
+compact and efficient and contained within a single folder.
 
 > A function should do only one thing, and do it well - Curly's Law
 
@@ -72,16 +72,6 @@ function to wrap everything up if you would like.
 
 ## Analysis
 
-Shown below is how I usually organize my analytical projects.
-
-   Supporting functions
-   Analysis
-      data_manipulation.R
-      exploratory_data_analysis.R
-      analysis.R
-      diagnostic.R
-      simulation.R
-      experiment.R
-   Methodology
-   Reference
-
+This repository illustrates how I usually organize my work which may
+be very restrictive. However the important point to note is that there
+is a logical structure.
