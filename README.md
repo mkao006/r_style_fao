@@ -76,3 +76,9 @@ function to wrap everything up if you would like.
 This repository illustrates how I usually organize my work which may
 be very restrictive. However the important point to note is that there
 is a logical structure.
+
+
+## Building R packages
+
+[A good guideline from Leek group
+policy](https://github.com/jtleek/rpackages)
