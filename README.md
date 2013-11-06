@@ -1,12 +1,12 @@
-# FAO R programming guidelines
+# R programming guidelines
 
 This is the repository for the R programming guideline of the Food and
 Agricultural Organization of the United Nations.
 
 
-# Writing R codes
+## Writing R codes
 
-## Style
+### Style
 
 Unlike other languages, there is no one single style for programming
 in R. We list the important elements while refer the user to the
@@ -24,7 +24,7 @@ style](http://cran.r-project.org/web/packages/rockchalk/vignettes/Rstyle.pdf)
 
 [Henrik Bengtsson's R style](https://docs.google.com/document/d/1esDVxyWvH8AsX-VJa-8oqWaHLs4stGlIbk8kLc5VlII/edit)
 
-## Documentation
+### Documentation
 
 Documentation is a daunting yet necessary task, thankfully there are
 simple documentation system in R using the `roxygen2`.
@@ -38,13 +38,13 @@ function.
 R](https://github.com/yihui/roxygen2)
 
 
-## Explanation and comment
+### Explanation and comment
 
 In order for other users to quickly understand and debug your code if
 necessary, comment are necessary.
 
-A simple description such as `Perform data manipulation` or
-`Performing linear regression for prediction` should suffice. 
+A simple description such as **Perform data manipulation** or
+**Performing linear regression for prediction** should suffice. 
 
 The purpose is to tell the user what task is performed at each step.
 This allows people to skim through the script to understand the
@@ -52,13 +52,13 @@ purpose and the logic of the analysis and program.
 
 
 
-# Managing scripts
+## Managing scripts
 
 Organization of project is another crucial element in helping people
 understanding your work.
 
 
-## Functions
+### Functions
 
 Each function should be in a seperate script, the function should be
 compact and efficient and contained within a single folder.
@@ -71,7 +71,7 @@ documentation and do just one thing. You can then have a wrapper
 function to wrap everything up if you would like.
 
 
-## Analysis
+### Analysis
 
 This repository illustrates how I usually organize my work which may
 be very restrictive. However the important point to note is that there
