@@ -12,7 +12,7 @@ Unlike other languages, there is no one single style for programming
 in R. We list the important elements while refer the user to the
 following suggested materials.
 
-* Have meaningful names for your *varable*, *function*, and *script*
+* Have meaningful names for your `varable`, `function`, and `script`
 
 [Google's R Style
 Guide](http://google-styleguide.googlecode.com/svn/trunk/Rguide.xml)
@@ -29,9 +29,10 @@ style](http://cran.r-project.org/web/packages/rockchalk/vignettes/Rstyle.pdf)
 Documentation is a daunting yet necessary task, thankfully there are
 simple documentation system in R using the `roxygen2`.
 
-A simple use of the roxygen declaration can be found in the script
-where the script starts with declaration describing the function and
-the parameters of the function.
+A simple use of the roxygen declaration can be found in the
+`helloWorld.R` under the `functions` folder. The script starts with
+the declaration describing the function and the parameters of the
+function.
 
 [Roxygen: Simple documentation for
 R](https://github.com/yihui/roxygen2)
