@@ -31,21 +31,10 @@ style](http://cran.r-project.org/web/packages/rockchalk/vignettes/Rstyle.pdf)
 
 [Henrik Bengtsson's R style](https://docs.google.com/document/d/1esDVxyWvH8AsX-VJa-8oqWaHLs4stGlIbk8kLc5VlII/edit)
 
-### Documentation
+### Documentation, exmplanation and comments
 
 Documentation is a daunting yet necessary task, thankfully there are
 simple documentation system in R using the `roxygen2`.
-
-A simple use of the roxygen declaration can be found in the
-`hello_world.R` under the `functions` folder. The script starts with
-the declaration describing the function and the parameters of the
-function.
-
-[Roxygen: Simple documentation for
-R](https://github.com/yihui/roxygen2)
-
-
-### Explanation and comment
 
 In order for other users to quickly understand and debug your code if
 necessary, comment are necessary.
@@ -57,6 +46,14 @@ The purpose is to tell the user what task is performed at each step.
 This allows people to skim through the script to understand the
 purpose and the logic of the analysis and program.
 
+A simple use of the roxygen declaration can be found in the
+`hello_world.R` and `imputationExample.R` under the `functions`
+folder. The script starts with the declaration describing the function
+and the parameters, and the comments acts like pseudo codes allowing
+the reader to skim and understand the broad functionality.
+
+[Roxygen: Simple documentation for
+R](https://github.com/yihui/roxygen2)
 
 
 ## Managing scripts
