@@ -4,13 +4,18 @@ This is the repository for the R programming guideline of the Food and
 Agricultural Organization of the United Nations.
 
 
-## Three Golden Rule
+## Four Golden Rule
 
 1. Have meaningful names for your `varable`, `function`, and `script`
+
 2. Keep the functions simple and compact. Do one thing and do it well. (rule
    of thumb, do not exceed 100 lines).
+
 3. Wrap your code, do not exeed 80~100 characters. Indent your code
    both 2 or 4 space are fine.
+
+4. Comment your code, they act like pseudo codes. See example at
+   `imputationExample.R` under the `functions` folder.
 
 ## Writing R codes
 
@@ -48,9 +53,7 @@ purpose and the logic of the analysis and program.
 
 A simple use of the roxygen declaration can be found in the
 `hello_world.R` and `imputationExample.R` under the `functions`
-folder. The script starts with the declaration describing the function
-and the parameters, and the comments acts like pseudo codes allowing
-the reader to skim and understand the broad functionality.
+folder. 
 
 [Roxygen: Simple documentation for
 R](https://github.com/yihui/roxygen2)
