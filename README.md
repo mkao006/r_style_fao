@@ -4,6 +4,14 @@ This is the repository for the R programming guideline of the Food and
 Agricultural Organization of the United Nations.
 
 
+## Three Golden Rule
+
+1. Have meaningful names for your `varable`, `function`, and `script`
+2. Keep the functions simple and compact. Do one thing and do it well. (rule
+   of thumb, do not exceed 100 lines).
+3. Wrap your code, do not exeed 80~100 characters. Indent your code
+   both 2 or 4 space are fine.
+
 ## Writing R codes
 
 ### Style
@@ -12,7 +20,6 @@ Unlike other languages, there is no one single style for programming
 in R. We list the important elements while refer the user to the
 following suggested materials.
 
-* Have meaningful names for your `varable`, `function`, and `script`
 
 [Google's R Style
 Guide](http://google-styleguide.googlecode.com/svn/trunk/Rguide.xml)
@@ -30,7 +37,7 @@ Documentation is a daunting yet necessary task, thankfully there are
 simple documentation system in R using the `roxygen2`.
 
 A simple use of the roxygen declaration can be found in the
-`helloWorld.R` under the `functions` folder. The script starts with
+`hello_world.R` under the `functions` folder. The script starts with
 the declaration describing the function and the parameters of the
 function.
 
