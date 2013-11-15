@@ -9,7 +9,7 @@
 ##' helloWorld(10)
 ##'
 
-hellowWorld = function(n){
+helloWorld = function(n){
     for(i in 1:n){
         cat("Hello World! \n")
     }

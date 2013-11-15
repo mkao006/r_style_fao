@@ -1,4 +1,4 @@
-##' This function performs imputation by linear mixed model
+##' This function performs imputation by linear mixed model and EM-algorithm
 ##'
 ##'
 ##' @param formula See the formula of lme4

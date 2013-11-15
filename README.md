@@ -4,26 +4,27 @@ This is the repository for the R programming guideline of the Food and
 Agricultural Organization of the United Nations.
 
 
-## Four Golden Rule
+## Four Golden Rules
 
 1. Have meaningful names for your `varable`, `function`, and `script`
 
 2. Keep the functions simple and compact. Do one thing and do it well. (rule
    of thumb, do not exceed 100 lines).
 
-3. Wrap your code, do not exeed 80~100 characters. Indent your code
-   both 2 or 4 space are fine.
+3. Wrap your code, do not exeed 80~100 characters, indent your code
+   both 2 or 4 space are fine. Using an editor such as R Studio will
+   help you with this.
 
 4. Comment your code, they act like pseudo codes. See example at
-   `imputationExample.R` under the `functions` folder.
+   `functions/imputationExample.R` and `analysis/analysis.R`.
 
 ## Writing R codes
 
 ### Style
 
 Unlike other languages, there is no one single style for programming
-in R. We list the important elements while refer the user to the
-following suggested materials.
+in R. Listed below are several sources of coding style, the style you
+choose does not really matter, just be consistent.
 
 
 [Google's R Style
@@ -38,8 +39,15 @@ style](http://cran.r-project.org/web/packages/rockchalk/vignettes/Rstyle.pdf)
 
 ### Documentation, exmplanation and comments
 
-Documentation is a daunting yet necessary task, thankfully there are
-simple documentation system in R using the `roxygen2`.
+Documentation is a daunting yet necessary task, thankfully these are
+made simple with the R package `roxygen2`.
+
+A simple use of the roxygen declaration can be found in the
+`hello_world.R` and `imputationExample.R` under the `functions`
+folder. 
+
+[Roxygen: Simple documentation for
+R](https://github.com/yihui/roxygen2)
 
 In order for other users to quickly understand and debug your code if
 necessary, comment are necessary.
@@ -50,13 +58,6 @@ A simple description such as **Perform data manipulation** or
 The purpose is to tell the user what task is performed at each step.
 This allows people to skim through the script to understand the
 purpose and the logic of the analysis and program.
-
-A simple use of the roxygen declaration can be found in the
-`hello_world.R` and `imputationExample.R` under the `functions`
-folder. 
-
-[Roxygen: Simple documentation for
-R](https://github.com/yihui/roxygen2)
 
 
 ## Managing scripts

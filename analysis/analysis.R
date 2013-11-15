@@ -1,6 +1,7 @@
 ########################################################################
 ## Title: Imputation example
 ## Date: 2013-11-13
+## Notes: This is only an example script, it does not RUN!
 ########################################################################
 
 ## Load library and source scripts
