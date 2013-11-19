@@ -97,7 +97,7 @@ Data Analysis](http://www.jstatsoft.org/v40/i01)
 processing](http://journal.r-project.org/archive/2010-2/RJournal_2010-2_Wickham.pdf)
 
 [Dates and Times Made Easy with 
-lubridate]http://www.jstatsoft.org/v40/i03
+lubridate](http://www.jstatsoft.org/v40/i03)
 
 
 ## Building R packages
