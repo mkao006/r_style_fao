@@ -37,7 +37,7 @@ style](http://cran.r-project.org/web/packages/rockchalk/vignettes/Rstyle.pdf)
 
 [Henrik Bengtsson's R style](https://docs.google.com/document/d/1esDVxyWvH8AsX-VJa-8oqWaHLs4stGlIbk8kLc5VlII/edit)
 
-### Documentation, exmplanation and comments
+### Documentation, explanation and comments
 
 Documentation is a daunting yet necessary task, thankfully these are
 made simple with the R package `roxygen2`.
@@ -58,7 +58,6 @@ A simple description such as **Perform data manipulation** or
 The purpose is to tell the user what task is performed at each step.
 This allows people to skim through the script to understand the
 purpose and the logic of the analysis and program.
-
 
 ## Managing scripts
 
@@ -85,8 +84,24 @@ This repository illustrates how I usually organize my work which may
 be very restrictive. However the important point to note is that there
 is a logical structure.
 
+#### Preparing data
+
+[Reshaping Data with the reshape Package](http://www.jstatsoft.org/v21/i12)
+After the publication of this paper the author created new version of 
+reshape - 'reshape2', where **cast** was changed to **dcast**/**acast**.
+
+[The Split-Apply-Combine Strategy for 
+Data Analysis](http://www.jstatsoft.org/v40/i01)
+
+[stringr: modern, consistent string
+processing](http://journal.r-project.org/archive/2010-2/RJournal_2010-2_Wickham.pdf)
+
+[Dates and Times Made Easy with 
+lubridate]http://www.jstatsoft.org/v40/i03
+
 
 ## Building R packages
 
 [A good guideline from Leek group
 policy](https://github.com/jtleek/rpackages)
+
