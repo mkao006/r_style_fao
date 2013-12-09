@@ -13,7 +13,7 @@
 #'   long format (instead of one column per every year two columns: year and 
 #'   corresponded value).
 #' @param value.names logical, TRUE by default. Should identificational vectors 
-#'   (area, element, etc.) be converted from numeric ids to names.
+#'   (area and item) be converted from numeric ids to names.
 #' @param stringsAsFactors logical. Should character 
 #'   identificational vectors be converted to factors.
 #' @param dbquery optional string with SQL-query to request from SWS.
@@ -41,10 +41,16 @@ if(!file.exists(class.path))
 into the working directory or specify full path with class.path argument.")
 
 # Check for the internal connection
-# Temrorary disable the checking
-is.local.conn <- T
+# Source of ping function:
+# http://stackoverflow.com/questions/7012796/ping-a-website-in-r
+ping <- function(x,stderr=FALSE,stdout=FALSE,...){
+  pingvec <- system2("ping",x,
+                     stderr=FALSE,
+                     stdout=FALSE,...)
+  if (pingvec == 0) TRUE else FALSE
+}
 
-if(!is.local.conn)
+if(!ping("lprdbwo1.fao.org"))
   stop("SWS DB allows only internal connections. Please get a cable and find 
 the nearest ethernet socket :)")
 
@@ -52,7 +58,36 @@ the nearest ethernet socket :)")
 library(RJDBC)
 library(stringr)
 library(reshape2)
+
+
+drv <- JDBC(driverClass = "oracle.jdbc.driver.OracleDriver",
+           classPath = class.path)
+conn <- dbConnect(drv, "jdbc:oracle:thin:@lprdbwo1:3310:fstp",
+                 user = user, password = pass)
+
+if(!missing(dbquery)) return(dbGetQuery(conn, dbquery))
+
+
+if(!missing(area)) area <- str_c(area, collapse=', ')
+if(!missing(item)) item <- str_c(item, collapse=', ')
+if(!missing(ele)) ele <- str_c(ele, collapse=', ')
+
+constrdbquery <- str_c("select * from FAOSTAT.TS_ICS_WORK_YR where area in (",
+                 area, ") and item in (",
+                 item, ") and ele in (",
+                 ele, ")"
+                 )
+
+dboutput <- sws_query(class.path=class.path, dbquery=constrdbquery)
+
+
+if(value.names) {
+  area.names <- sws_query(class.path=class.path,
+                          dbquery="select * from FAOSTAT.AREA")
+  item.names <- sws_query(class.path=class.path,
+                          dbquery="select * from FAOSTAT.ITEM")
+}
        
-return()
+return(dboutput)
 
 }
