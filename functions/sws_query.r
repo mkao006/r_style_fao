@@ -34,60 +34,95 @@ sws_query <- function(area, item, ele, year, symb, melted = TRUE,
                       stringsAsFactors = default.stringsAsFactors(),
                       dbquery, class.path = 'ojdbc14.jar',
                       user = 'demo', pass = 'demo') {
-
-# Check for ojdbc14.jar
-if(!file.exists(class.path)) 
-  stop("Oracle JDBC class not found. Please, put file ojdbc14.jar
+  
+  
+  
+  # Check for ojdbc14.jar
+  if(!file.exists(class.path)) 
+    stop("Oracle JDBC class not found. Please, put file ojdbc14.jar
 into the working directory or specify full path with class.path argument.")
-
-# Check for the internal connection
-# Source of ping function:
-# http://stackoverflow.com/questions/7012796/ping-a-website-in-r
-ping <- function(x,stderr=FALSE,stdout=FALSE,...){
-  pingvec <- system2("ping",x,
-                     stderr=FALSE,
-                     stdout=FALSE,...)
-  if (pingvec == 0) TRUE else FALSE
-}
-
-if(!ping("lprdbwo1.fao.org"))
-  stop("SWS DB allows only internal connections. Please get a cable and find 
+  
+  # Check for the internal connection
+  # Source of ping function:
+  # http://stackoverflow.com/questions/7012796/ping-a-website-in-r
+  ping <- function(x,stderr=FALSE,stdout=FALSE,...){
+    pingvec <- system2("ping",x,
+                       stderr=FALSE,
+                       stdout=FALSE,...)
+    if (pingvec == 0) TRUE else FALSE
+  }
+  
+  if(!ping("lprdbwo1.fao.org"))
+    stop("SWS DB allows only internal connections. Please get a cable and find 
 the nearest ethernet socket :)")
+  
+  # Packages
+  library(RJDBC)
 
-# Packages
-library(RJDBC)
-library(stringr)
-library(reshape2)
+  
+  drv <- JDBC(driverClass = "oracle.jdbc.driver.OracleDriver",
+              classPath = class.path)
+  conn <- dbConnect(drv, "jdbc:oracle:thin:@lprdbwo1:3310:fstp",
+                    user = user, password = pass)
+  
+  if(!missing(dbquery)) {
+    dboutput <- dbGetQuery(conn, dbquery)
+    dbDisconnect(conn)
+    return(dboutput)
+  }
 
+  library(stringr)
+  library(reshape2)
+  
+  if(!missing(area)) area <- str_c(area, collapse=', ')
+  if(!missing(item)) item <- str_c(item, collapse=', ')
+  if(!missing(ele)) ele <- str_c(ele, collapse=', ')
+  if(!missing(year)) year <- str_c('NUM_', year - 1960, collapse=', ')
+#   if(!missing(year) & symb) flag <- str_c('SYM_', year - 1960, collapse = ', ')
+  
+  # Constructing query
+  dbmain <- 'TS_ICS_WORK_YR'
+  # WHAT
+  if(value.names) 
+    whatsql <- str_c('area.name_e', 'item.name_e', sep = ', ') else
+      whatsql <- str_c('area', 'item', sep = ', ')
+  
+  
+  whatsql <- str_c(whatsql, 'ele', sep = ', ')
+  
+  if(!missing(year)) whatsql <- str_c(whatsql, year, sep=', ', collapse=', ')
+#   if(!missing(year) & symb) whatsql <- str_c(whatsql, flag, collapse = ', ')
 
-drv <- JDBC(driverClass = "oracle.jdbc.driver.OracleDriver",
-           classPath = class.path)
-conn <- dbConnect(drv, "jdbc:oracle:thin:@lprdbwo1:3310:fstp",
-                 user = user, password = pass)
-
-if(!missing(dbquery)) return(dbGetQuery(conn, dbquery))
-
-
-if(!missing(area)) area <- str_c(area, collapse=', ')
-if(!missing(item)) item <- str_c(item, collapse=', ')
-if(!missing(ele)) ele <- str_c(ele, collapse=', ')
-
-constrdbquery <- str_c("select * from FAOSTAT.TS_ICS_WORK_YR where area in (",
-                 area, ") and item in (",
-                 item, ") and ele in (",
-                 ele, ")"
-                 )
-
-dboutput <- sws_query(class.path=class.path, dbquery=constrdbquery)
-
-
-if(value.names) {
-  area.names <- sws_query(class.path=class.path,
-                          dbquery="select * from FAOSTAT.AREA")
-  item.names <- sws_query(class.path=class.path,
-                          dbquery="select * from FAOSTAT.ITEM")
-}
-       
-return(dboutput)
-
+  
+  # FROM
+  fromsql <- dbmain
+  if(value.names) fromsql <- str_c(str_c('FAOSTAT.',fromsql),
+                                   'FAOSTAT.AREA, FAOSTAT.ITEM', sep = ', ')
+  
+  # WHERE
+  wheresql <- list()
+  if(!missing(area)) wheresql[length(wheresql) + 1] <- 
+    str_c(dbmain, '.area in (', area, ') ')
+  if(!missing(item)) wheresql[length(wheresql) + 1] <-
+    str_c(dbmain, '.item in (', item, ') ')
+  if(!missing(ele)) wheresql[length(wheresql) + 1] <-
+    str_c(dbmain, '.item in (', ele, ') ')
+#   if(length(wheresql == 0)) wheresql[1] <- '*'
+  
+  if(value.names) wheresql[length(wheresql) + 1] <- 
+    str_c(dbmain, '.AREA = AREA.AREA and ', dbmain, '.item = item.item')
+  
+  wheresql <- str_c(unlist(wheresql), collapse=' and ')
+  
+  
+  constrdbquery <- str_c('select ', whatsql, ' from ', 
+                         fromsql, ' where ', wheresql
+  )
+  
+  dboutput <- sws_query(class.path=class.path, dbquery=constrdbquery)
+  
+  
+  
+  dboutput
+  
 }
