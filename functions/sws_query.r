@@ -29,7 +29,7 @@
 #' @return data.frame with results from SWS DB.
 
 
-sws_query <- function(area, item, ele, year, symb, melted = TRUE, 
+sws_query <- function(area, item, ele, year, symb = T, melted = TRUE, 
                       value.names = T, 
                       stringsAsFactors = default.stringsAsFactors(),
                       dbquery, class.path = 'ojdbc14.jar',
@@ -77,8 +77,13 @@ the nearest ethernet socket :)")
   if(!missing(area)) area <- str_c(area, collapse=', ')
   if(!missing(item)) item <- str_c(item, collapse=', ')
   if(!missing(ele)) ele <- str_c(ele, collapse=', ')
-  if(!missing(year)) year <- str_c('NUM_', year - 1960, collapse=', ')
-#   if(!missing(year) & symb) flag <- str_c('SYM_', year - 1960, collapse = ', ')
+  if(!missing(year) & symb) flag <- 
+    str_c('SYMB_', formatC(year - 1959, width=2, format='d', flag='0'),
+          collapse = ', ')
+  if(!missing(year)) year <- 
+    str_c('NUM_', 
+          formatC(year - 1959, width=2, format='d', flag='0'), collapse=', ')
+
   
   # Constructing query
   dbmain <- 'TS_ICS_WORK_YR'
@@ -90,8 +95,8 @@ the nearest ethernet socket :)")
   
   whatsql <- str_c(whatsql, 'ele', sep = ', ')
   
-  if(!missing(year)) whatsql <- str_c(whatsql, year, sep=', ', collapse=', ')
-#   if(!missing(year) & symb) whatsql <- str_c(whatsql, flag, collapse = ', ')
+  if(!missing(year)) whatsql <- str_c(whatsql, year, sep=', ')
+  if(!missing(year) & symb) whatsql <- str_c(whatsql, flag, sep=', ')
 
   
   # FROM
@@ -106,11 +111,11 @@ the nearest ethernet socket :)")
   if(!missing(item)) wheresql[length(wheresql) + 1] <-
     str_c(dbmain, '.item in (', item, ') ')
   if(!missing(ele)) wheresql[length(wheresql) + 1] <-
-    str_c(dbmain, '.item in (', ele, ') ')
+    str_c(dbmain, '.ele in (', ele, ') ')
 #   if(length(wheresql == 0)) wheresql[1] <- '*'
   
   if(value.names) wheresql[length(wheresql) + 1] <- 
-    str_c(dbmain, '.AREA = AREA.AREA and ', dbmain, '.item = item.item')
+    str_c('AREA.AREA = ', dbmain, '.AREA and item.item = ', dbmain, '.item')
   
   wheresql <- str_c(unlist(wheresql), collapse=' and ')
   
@@ -118,6 +123,9 @@ the nearest ethernet socket :)")
   constrdbquery <- str_c('select ', whatsql, ' from ', 
                          fromsql, ' where ', wheresql
   )
+
+# For debugging of query construction  
+#   return(constrdbquery)
   
   dboutput <- sws_query(class.path=class.path, dbquery=constrdbquery)
   
