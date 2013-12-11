@@ -8,7 +8,7 @@ y <- FAOSTAT.TS_ICS_WORK_YR
 head(x)
 str(x)
 
-y1 <- sws_query(area=33, ele=31, item=15, class.path="../sws/ojdbc14.jar")
+y1 <- sws_query(area=33, ele=c(31, 51), item=15, year=1960:1970, class.path="../sws/ojdbc14.jar")
 
 items <- sws_query(class.path="../sws/ojdbc14.jar", dbquery="select * from FAOSTAT.ITEM")
 
@@ -25,3 +25,11 @@ sws_query(class.path="../sws/ojdbc14.jar",
 from FAOSTAT.AREA, FAOSTAT.TS_ICS_WORK_YR, FAOSTAT.ITEM
 where area.area = 33 and area.area = TS_ICS_WORK_YR.area 
 and item.item = TS_ICS_WORK_YR.item")
+
+y <- sws_query(class.path="../sws/ojdbc14.jar", dbquery=
+"select * from FAOSTAT.TS_ICS_WORK_YR
+where area = 33 and item=15
+"
+)
+
+y1 <- sws_query(ele=c(31, 51), item=15, year=1960:1970, class.path="../sws/ojdbc14.jar")
