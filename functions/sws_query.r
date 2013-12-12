@@ -65,6 +65,8 @@ the nearest ethernet socket :)")
   conn <- dbConnect(drv, "jdbc:oracle:thin:@lprdbwo1:3310:fstp",
                     user = user, password = pass)
   
+  # This is the exclusive request to DB in the function.
+  # All others just invoke sws_query with dbquery argument.
   if(!missing(dbquery)) {
     dboutput <- dbGetQuery(conn, dbquery)
     dbDisconnect(conn)
@@ -74,6 +76,24 @@ the nearest ethernet socket :)")
   library(stringr)
   library(reshape2)
   
+  # Function to convert year in colnames, e.g. from 00 to 1960
+  convertyear <- function(x) {
+    # Vectorizing the function
+    if(length(x) > 1) {
+      require(plyr)
+      return(unlist(llply(x, convertyear)))
+    }
+    
+    require(stringr)
+    if(!str_detect(x, '[0-9]{2}$')) return(x)
+    orignumb <- as.numeric(str_extract(x, '[0-9]{2}$'))
+    corryear <- orignumb + 1959
+    corrname <- str_c(str_replace(x, '(^.*)([0-9]{2}$)', '\\1'), corryear)
+    corrname
+  }
+  
+  
+  # convert vectors in arguments to collapsed strings.
   if(!missing(area)) area <- str_c(area, collapse=', ')
   if(!missing(item)) item <- str_c(item, collapse=', ')
   if(!missing(ele)) ele <- str_c(ele, collapse=', ')
@@ -86,8 +106,12 @@ the nearest ethernet socket :)")
 
   
   # Constructing query
+  # Name of data base table. In case of using tsv_ics_work_yr it's not
+  # require to convert years from 00 to 1960. But possibly you need to 
+  # remove totals.
   dbmain <- 'TS_ICS_WORK_YR'
-  # WHAT
+  
+  # WHAT part of query
   if(value.names) 
     whatsql <- str_c('area.name_e', 'item.name_e', sep = ', ') else
       whatsql <- str_c('area', 'item', sep = ', ')
@@ -124,45 +148,35 @@ the nearest ethernet socket :)")
                          fromsql, ' where ', wheresql
   )
 
-# For debugging of query construction  
-#   return(constrdbquery)
-  
+  # Ask the DB with constructed query
   dboutput <- sws_query(class.path=class.path, dbquery=constrdbquery)
+  
   colnames(dboutput) <- tolower(colnames(dboutput))
   colnames(dboutput)[1:2] <- c('area', 'item')
   
-  # Function to convert year in colnames, e.g. from 00 to 1960
-  convertyear <- function(x) {
-    # Vectorizing the function
-    if(length(x) > 1) {
-      require(plyr)
-      return(unlist(llply(x, convertyear)))
-    }
-    
-    require(stringr)
-    if(!str_detect(x, '[0-9]{2}$')) return(x)
-    orignumb <- as.numeric(str_extract(x, '[0-9]{2}$'))
-    corryear <- orignumb + 1959
-    corrname <- str_c(str_replace(x, '(^.*)([0-9]{2}$)', '\\1'), corryear)
-    corrname
-  }
-  
+  # Converting colnames with years from 00 to 1960
   if(tolower(dbmain) == 'ts_ics_work_yr') colnames(dboutput) <-
     convertyear(colnames(dboutput))
   
-  # Melting
+  # Converting from wide format to long.
   if(melted) {
+    
+    # Selecting part with values only (without symbols/flags)
     valueswithoutsymb <- dboutput[, colnames(dboutput)[
       str_detect(colnames(dboutput), perl('^(?!symb)'))]]
+    
+    # Melting
     valueswithoutsymb <- 
       melt(valueswithoutsymb, measure.vars=
              names(valueswithoutsymb[str_detect(names(valueswithoutsymb),
                                           '^num_')]),
            variable.name = 'year')
+    
+    # Convert character vector with year to numeric
     valueswithoutsymb$year <- as.numeric(str_replace(valueswithoutsymb$year,
                                                      '^num_', ''))
     
-    
+    # Converting part with symbols/flags
     if(symb) {
       flags <- dboutput[, colnames(dboutput)[
         str_detect(colnames(dboutput), perl('^(?!num)'))]]
@@ -174,7 +188,8 @@ the nearest ethernet socket :)")
              variable.name = 'year', value.name = 'flag')
       
       flags$year <- as.numeric(str_replace(flags$year, '^symb_', ''))
-
+      
+      # Joining values and flags
       dboutput <- join(valueswithoutsymb, flags, by = c('area', 'item',
                                                         'ele', 'year'))
       
