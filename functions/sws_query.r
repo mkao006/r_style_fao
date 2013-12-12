@@ -113,7 +113,9 @@ the nearest ethernet socket :)")
   
   # WHAT part of query
   if(value.names) 
-    whatsql <- str_c('area.name_e', 'item.name_e', sep = ', ') else
+    whatsql <- str_c('area.name_e as area',
+                     'item.name_e as item', 
+                     sep = ', ') else
       whatsql <- str_c('area', 'item', sep = ', ')
   
   
@@ -152,7 +154,7 @@ the nearest ethernet socket :)")
   dboutput <- sws_query(class.path=class.path, dbquery=constrdbquery)
   
   colnames(dboutput) <- tolower(colnames(dboutput))
-  colnames(dboutput)[1:2] <- c('area', 'item')
+#   colnames(dboutput)[1:2] <- c('area', 'item')
   
   # Converting colnames with years from 00 to 1960
   if(tolower(dbmain) == 'ts_ics_work_yr') colnames(dboutput) <-
@@ -198,7 +200,7 @@ the nearest ethernet socket :)")
 
 
   }
-  
+    
   dboutput
   
 }
