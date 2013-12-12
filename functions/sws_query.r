@@ -46,14 +46,14 @@ into the working directory or specify full path with class.path argument.")
   # Source of ping function:
   # http://stackoverflow.com/questions/7012796/ping-a-website-in-r
   ping <- function(x,stderr=FALSE,stdout=FALSE,...){
-    pingvec <- system2("ping",x,
+    pingvec <- system2("ping",paste('-n 1', x),
                        stderr=FALSE,
                        stdout=FALSE,...)
     if (pingvec == 0) TRUE else FALSE
   }
   
   if(!ping("lprdbwo1.fao.org"))
-    stop("SWS DB allows only internal connections. Please get a cable and find 
+    stop("SWS DB accepts only internal connections. Please get a cable and find 
 the nearest ethernet socket :)")
   
   # Packages
@@ -128,9 +128,61 @@ the nearest ethernet socket :)")
 #   return(constrdbquery)
   
   dboutput <- sws_query(class.path=class.path, dbquery=constrdbquery)
+  colnames(dboutput) <- tolower(colnames(dboutput))
+  colnames(dboutput)[1:2] <- c('area', 'item')
+  
+  # Function to convert year in colnames, e.g. from 00 to 1960
+  convertyear <- function(x) {
+    # Vectorizing the function
+    if(length(x) > 1) {
+      require(plyr)
+      return(unlist(llply(x, convertyear)))
+    }
+    
+    require(stringr)
+    if(!str_detect(x, '[0-9]{2}$')) return(x)
+    orignumb <- as.numeric(str_extract(x, '[0-9]{2}$'))
+    corryear <- orignumb + 1959
+    corrname <- str_c(str_replace(x, '(^.*)([0-9]{2}$)', '\\1'), corryear)
+    corrname
+  }
+  
+  if(tolower(dbmain) == 'ts_ics_work_yr') colnames(dboutput) <-
+    convertyear(colnames(dboutput))
   
   # Melting
-  
+  if(melted) {
+    valueswithoutsymb <- dboutput[, colnames(dboutput)[
+      str_detect(colnames(dboutput), perl('^(?!symb)'))]]
+    valueswithoutsymb <- 
+      melt(valueswithoutsymb, measure.vars=
+             names(valueswithoutsymb[str_detect(names(valueswithoutsymb),
+                                          '^num_')]),
+           variable.name = 'year')
+    valueswithoutsymb$year <- as.numeric(str_replace(valueswithoutsymb$year,
+                                                     '^num_', ''))
+    
+    
+    if(symb) {
+      flags <- dboutput[, colnames(dboutput)[
+        str_detect(colnames(dboutput), perl('^(?!num)'))]]
+      
+      flags <- 
+        melt(flags, measure.vars=
+               names(flags[str_detect(names(flags),
+                                                  '^symb_')]),
+             variable.name = 'year', value.name = 'flag')
+      
+      flags$year <- as.numeric(str_replace(flags$year, '^symb_', ''))
+
+      dboutput <- join(valueswithoutsymb, flags, by = c('area', 'item',
+                                                        'ele', 'year'))
+      
+    } else dboutput <- valueswithoutsymb
+    
+
+
+  }
   
   dboutput
   
