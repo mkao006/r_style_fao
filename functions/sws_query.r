@@ -97,6 +97,11 @@ the nearest ethernet socket :)")
   if(!missing(area)) area <- str_c(area, collapse=', ')
   if(!missing(item)) item <- str_c(item, collapse=', ')
   if(!missing(ele)) ele <- str_c(ele, collapse=', ')
+  
+  # In case user specifies only one ele and and one item we want function to 
+  # return colname of value as name of ele instead of value.
+  # ...
+  
   if(!missing(year) & symb) flag <- 
     str_c('SYMB_', formatC(year - 1959, width=2, format='d', flag='0'),
           collapse = ', ')
