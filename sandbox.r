@@ -70,3 +70,14 @@ corrname
                   
 str_detect(c('area', 'num_01', '!symb_01'), perl('(!symb)'))
 
+df <- data.frame(a = runif(10, 30, 40), b = rnorm(10, 35, 5))
+l <- list(alessb = 'a < b', bless35 = 'b < 35')
+r <- logic_check(df, l)
+# Check the row has at least one error
+aaply(r, .(1), function(x) sum(x) < length(x))
+
+# What data columns take part in rules
+laply(names(df), function(x) sum(str_detect(unlist(l), x)) > 0)
+
+# Check the rule has at least one trigger
+aaply(r, .(2), function(x) sum(x) < length(x))
