@@ -81,3 +81,9 @@ laply(names(df), function(x) sum(str_detect(unlist(l), x)) > 0)
 
 # Check the rule has at least one trigger
 aaply(r, .(2), function(x) sum(x) < length(x))
+
+
+# Mondrian
+x1 <- sws_query(33:40, item=866, ele=11, year=1996:2000)
+x1$flag[x1$flag==' '] <- 'good'
+write.table(x1, 'x1.tsv', quote=F, sep='\t', row.names=F)
