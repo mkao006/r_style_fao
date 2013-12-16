@@ -75,6 +75,7 @@ the nearest ethernet socket :)")
 
   library(stringr)
   library(reshape2)
+  year_shift <- 1960
   
   # Function to convert year in colnames, e.g. from 00 to 1960
   convertyear <- function(x) {
@@ -87,7 +88,7 @@ the nearest ethernet socket :)")
     require(stringr)
     if(!str_detect(x, '[0-9]{2}$')) return(x)
     orignumb <- as.numeric(str_extract(x, '[0-9]{2}$'))
-    corryear <- orignumb + 1959
+    corryear <- orignumb + year_shift
     corrname <- str_c(str_replace(x, '(^.*)([0-9]{2}$)', '\\1'), corryear)
     corrname
   }
@@ -103,11 +104,11 @@ the nearest ethernet socket :)")
   # ...
   
   if(!missing(year) & symb) flag <- 
-    str_c('SYMB_', formatC(year - 1959, width=2, format='d', flag='0'),
+    str_c('SYMB_', formatC(year - year_shift, width=2, format='d', flag='0'),
           collapse = ', ')
   if(!missing(year)) year <- 
     str_c('NUM_', 
-          formatC(year - 1959, width=2, format='d', flag='0'), collapse=', ')
+          formatC(year - year_shift, width=2, format='d', flag='0'), collapse=', ')
 
   
   # Constructing query
