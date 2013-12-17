@@ -119,8 +119,7 @@ the nearest ethernet socket :)")
   
   # WHAT part of query
   
-  # If one
-  
+
   
   
   if(value.names) 
