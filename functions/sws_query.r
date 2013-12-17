@@ -118,6 +118,11 @@ the nearest ethernet socket :)")
   dbmain <- 'TS_ICS_WORK_YR'
   
   # WHAT part of query
+  
+  # If one
+  
+  
+  
   if(value.names) 
     whatsql <- str_c('area.name_e as area',
                      'item.name_e as item', 
