@@ -85,5 +85,57 @@ aaply(r, .(2), function(x) sum(x) < length(x))
 
 # Mondrian
 x1 <- sws_query(33:40, item=866, ele=11, year=1996:2000)
+# User has to replace values represented by space with other character/string
 x1$flag[x1$flag==' '] <- 'good'
 write.table(x1, 'x1.tsv', quote=F, sep='\t', row.names=F)
+
+
+q <- 
+"SELECT 
+i.ITEM,
+i.ITEM_TYP,
+i.NAME_E AS ItemName,
+e.ELE,
+e.DISPLAY_ELE,
+e.STD_UNIT,
+e.LONG_NAME_E AS EleName, 
+data.NUM_50,
+data.AREA, area.NAME_E AS AreaName
+FROM FAOSTAT.ITEM i
+INNER JOIN FAOSTAT.ITEM_TYP_ELE_DISPLAY_ELE e ON 
+i.ITEM_TYP = e.ITEM_TYP 
+INNER JOIN FAOSTAT.TS_ICS_WORK_YR data ON 
+i.ITEM = data.ITEM and e.ELE = data.ELE 
+INNER JOIN FAOSTAT.AREA area ON 
+area.AREA = data.AREA
+WHERE data.ELE=11 AND data.ITEM=866 AND area.AREA=33"
+
+q <- 
+  "SELECT 
+ITEM.ITEM,
+ITEM.ITEM_TYP,
+ITEM.NAME_E AS ItemName,
+ITEM_TYP_ELE_DISPLAY_ELE.ELE,
+ITEM_TYP_ELE_DISPLAY_ELE.DISPLAY_ELE,
+ITEM_TYP_ELE_DISPLAY_ELE.STD_UNIT,
+ITEM_TYP_ELE_DISPLAY_ELE.LONG_NAME_E AS EleName, 
+NUM_50,
+TS_ICS_WORK_YR.AREA, AREA.NAME_E AS AreaName
+FROM FAOSTAT.ITEM
+INNER JOIN FAOSTAT.ITEM_TYP_ELE_DISPLAY_ELE ON 
+ITEM.ITEM_TYP = ITEM_TYP_ELE_DISPLAY_ELE.ITEM_TYP 
+INNER JOIN FAOSTAT.TS_ICS_WORK_YR ON 
+ITEM.ITEM = TS_ICS_WORK_YR.ITEM and 
+ITEM_TYP_ELE_DISPLAY_ELE.ELE = TS_ICS_WORK_YR.ELE 
+INNER JOIN FAOSTAT.AREA ON 
+AREA.AREA = TS_ICS_WORK_YR.AREA
+WHERE TS_ICS_WORK_YR.ELE in(11) AND 
+TS_ICS_WORK_YR.ITEM in(866) AND AREA.AREA in(33, 79)"
+
+
+y <- sws_query(dbquery=q)
+
+# List all tables
+
+q <- "SELECT owner, table_name
+FROM all_tables"
