@@ -33,7 +33,7 @@ sws_query <- function(area, item, ele, year, symb = T, melted = TRUE,
                       value.names = T, 
                       stringsAsFactors = default.stringsAsFactors(),
                       dbquery, class.path = 'ojdbc14.jar',
-                      user = 'demo', pass = 'demo') {
+                      user = 'demo', pass = 'demo', pairs) {
   
   
   
@@ -119,46 +119,93 @@ the nearest ethernet socket :)")
   
   # WHAT part of query
   
+  if(value.names) {
+    whatsql <- 
+      "SELECT 
+ITEM.ITEM,
+ITEM.ITEM_TYP,
+ITEM.NAME_E AS ItemName,
+ITEM_TYP_ELE_DISPLAY_ELE.ELE,
+ITEM_TYP_ELE_DISPLAY_ELE.DISPLAY_ELE,
+ITEM_TYP_ELE_DISPLAY_ELE.STD_UNIT,
+ITEM_TYP_ELE_DISPLAY_ELE.NAME_E AS EleName,
+TS_ICS_WORK_YR.AREA,
+AREA.NAME_E AS AreaName"
+    
+    
+    if(!missing(year)) whatsql <- str_c(whatsql, year, sep=', ')
+    if(!missing(year) & symb) whatsql <- str_c(whatsql, flag, sep=', ')
+    
+    fromsql <- "FROM FAOSTAT.ITEM 
+INNER JOIN FAOSTAT.ITEM_TYP_ELE_DISPLAY_ELE ON 
+ITEM.ITEM_TYP = ITEM_TYP_ELE_DISPLAY_ELE.ITEM_TYP 
+INNER JOIN FAOSTAT.TS_ICS_WORK_YR ON 
+ITEM.ITEM = TS_ICS_WORK_YR.ITEM and 
+ITEM_TYP_ELE_DISPLAY_ELE.ELE = TS_ICS_WORK_YR.ELE 
+INNER JOIN FAOSTAT.AREA ON 
+AREA.AREA = TS_ICS_WORK_YR.AREA"
+    
+    #WHERE for pairs
+    
+    if(!missing(pairs)) {
+      require(plyr)
+      pairs <- llply(seq_len(length(pairs)), function(x) {
+        item <- pairs[[x]]
+        ele <- names(pairs)[x]
+        str_c('(', dbmain, '.ELE=', ele, ' AND ', dbmain, '.ITEM=', item, ')')
+      })
+      pairs <- str_c(unlist(pairs), collapse=' OR ')
+      pairs <- str_c('(', pairs, ')')
+      
+      wheresql <- str_c('WHERE ', pairs, 'AND AREA.AREA in(', area, ')')
+                   
+    }
+    
+    constrdbquery <- str_c(whatsql, fromsql, wheresql, sep=' ')
 
+    
+    
+    
+    
+  # End of value.names
+    
+  }
   
-  
-  if(value.names) 
-    whatsql <- str_c('area.name_e as area',
-                     'item.name_e as item', 
-                     sep = ', ') else
-      whatsql <- str_c('area', 'item', sep = ', ')
-  
-  
-  whatsql <- str_c(whatsql, 'ele', sep = ', ')
-  
-  if(!missing(year)) whatsql <- str_c(whatsql, year, sep=', ')
-  if(!missing(year) & symb) whatsql <- str_c(whatsql, flag, sep=', ')
-
+  if(!value.names) {
+    whatsql <- str_c('area', 'item', 'ele', sep = ', ')
+    if(!missing(year)) whatsql <- str_c(whatsql, year, sep=', ')
+    if(!missing(year) & symb) whatsql <- str_c(whatsql, flag, sep=', ')
+    constrdbquery <- str_c('select ', whatsql, ' from ', 
+                           fromsql, ' where ', wheresql
+    )
+  }
   
   # FROM
   fromsql <- dbmain
-  if(value.names) fromsql <- str_c(str_c('FAOSTAT.',fromsql),
-                                   'FAOSTAT.AREA, FAOSTAT.ITEM', sep = ', ')
   
+
+
+    
+    
   # WHERE
-  wheresql <- list()
-  if(!missing(area)) wheresql[length(wheresql) + 1] <- 
-    str_c(dbmain, '.area in (', area, ') ')
-  if(!missing(item)) wheresql[length(wheresql) + 1] <-
-    str_c(dbmain, '.item in (', item, ') ')
-  if(!missing(ele)) wheresql[length(wheresql) + 1] <-
-    str_c(dbmain, '.ele in (', ele, ') ')
-#   if(length(wheresql == 0)) wheresql[1] <- '*'
+#   wheresql <- list()
+#   if(!missing(area)) wheresql[length(wheresql) + 1] <- 
+#     str_c(dbmain, '.area in (', area, ') ')
+#   if(!missing(item)) wheresql[length(wheresql) + 1] <-
+#     str_c(dbmain, '.item in (', item, ') ')
+#   if(!missing(ele)) wheresql[length(wheresql) + 1] <-
+#     str_c(dbmain, '.ele in (', ele, ') ')
+# #   if(length(wheresql == 0)) wheresql[1] <- '*'
+#   
+#   if(value.names) wheresql[length(wheresql) + 1] <- 
+#     str_c('AREA.AREA = ', dbmain, '.AREA and item.item = ', dbmain, '.item')
+#   wheresql <- str_c(unlist(wheresql), collapse=' and ')
+
+
   
-  if(value.names) wheresql[length(wheresql) + 1] <- 
-    str_c('AREA.AREA = ', dbmain, '.AREA and item.item = ', dbmain, '.item')
+#   return(constrdbquery)
   
-  wheresql <- str_c(unlist(wheresql), collapse=' and ')
-  
-  
-  constrdbquery <- str_c('select ', whatsql, ' from ', 
-                         fromsql, ' where ', wheresql
-  )
+
 
   # Ask the DB with constructed query
   dboutput <- sws_query(class.path=class.path, dbquery=constrdbquery)
