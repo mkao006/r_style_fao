@@ -90,6 +90,11 @@ x1$flag[x1$flag==' '] <- 'good'
 write.table(x1, 'x1.tsv', quote=F, sep='\t', row.names=F)
 
 
+# List all tables
+
+q <- "SELECT owner, table_name
+FROM all_tables"
+
 q <- 
 "SELECT 
 i.ITEM,
@@ -132,10 +137,48 @@ AREA.AREA = TS_ICS_WORK_YR.AREA
 WHERE TS_ICS_WORK_YR.ELE in(11) AND 
 TS_ICS_WORK_YR.ITEM in(866) AND AREA.AREA in(33, 79)"
 
+# Some ele|item pairs
 
+q <- 
+"SELECT 
+ITEM.ITEM,
+ITEM.ITEM_TYP,
+ITEM.NAME_E AS ItemName,
+ITEM_TYP_ELE_DISPLAY_ELE.ELE,
+ITEM_TYP_ELE_DISPLAY_ELE.DISPLAY_ELE,
+ITEM_TYP_ELE_DISPLAY_ELE.STD_UNIT,
+ITEM_TYP_ELE_DISPLAY_ELE.NAME_E AS EleName, 
+NUM_50, NUM_51,
+TS_ICS_WORK_YR.AREA, AREA.NAME_E AS AreaName
+FROM FAOSTAT.ITEM
+INNER JOIN FAOSTAT.ITEM_TYP_ELE_DISPLAY_ELE ON 
+ITEM.ITEM_TYP = ITEM_TYP_ELE_DISPLAY_ELE.ITEM_TYP 
+INNER JOIN FAOSTAT.TS_ICS_WORK_YR ON 
+ITEM.ITEM = TS_ICS_WORK_YR.ITEM and 
+ITEM_TYP_ELE_DISPLAY_ELE.ELE = TS_ICS_WORK_YR.ELE 
+INNER JOIN FAOSTAT.AREA ON 
+AREA.AREA = TS_ICS_WORK_YR.AREA
+WHERE ((TS_ICS_WORK_YR.ELE=11 AND 
+TS_ICS_WORK_YR.ITEM=866) 
+OR (TS_ICS_WORK_YR.ELE=41 AND 
+TS_ICS_WORK_YR.ITEM=867)) 
+AND AREA.AREA in(33, 79)"
 y <- sws_query(dbquery=q)
 
-# List all tables
+library(reshape2)
+dcast(y, ...~ELENAME, value.var='NUM_50')
 
-q <- "SELECT owner, table_name
-FROM all_tables"
+pairs <- list('11'=866, '41'=867)
+as.numeric(names(pairs)[[1]])
+pairs[[1]]
+
+
+y <- sws_query(symb=F, melted=T, area=c(33, 79), year=1997:2000, pairs=pairs)
+y <- y[, c('elename', 'areaname', 'year', 'value')]
+y <- dcast(y, ... ~ elename, value.var = 'value')
+make.names(names(y))
+y$'Carcass Wt'
+eval(parse(text='some_stat <- Stocks * 2'), y)
+within(y, {some_stat <- Stocks * 2
+           second_stat <- `Carcass Wt` / Stocks})
+
