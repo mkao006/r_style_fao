@@ -21,13 +21,13 @@ jarfile <- "ojdbc14.jar"
 ## Download the total egg production data, in metric tonnes, for Canada for
 ## years 1961-2012
 
-canada_eggs_tonnes <- sws_query(1:299, item= 1062, ele=51, year=1961:2012, 
+canada_eggs_tonnes <- sws_query(area = 33, item= 1062, ele=51, year=1961:2012, 
                          class.path= jarfile)
        
 ## Download the total egg production data, in number of individual eggs, for
 ## Canada for years 1961-2012
 
-canada_eggs <- sws_query(1:299, item=1067, ele=51, year=1961:2012, 
+canada_eggs <- sws_query(area = 33, item=1067, ele=51, year=1961:2012, 
                          class.path= jarfile)
 
 ## Divide the two values to calculate the mean weight per egg produced
