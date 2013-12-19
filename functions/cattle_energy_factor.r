@@ -3,11 +3,7 @@
 
 cattle_energy_factor <- function(area, year) {
   
-  if(length(year) > 1) {
-    library(plyr)
-    return(ldply(year, cattle_energy_factor, area = area))
-  }
-  
+ 
   vars <- list(heads = c(11, 866), carcass = c(41, 867), milk = c(51, 882))
  
 
