@@ -182,3 +182,6 @@ eval(parse(text='some_stat <- Stocks * 2'), y)
 within(y, {some_stat <- Stocks * 2
            second_stat <- `Carcass Wt` / Stocks})
 
+
+
+
