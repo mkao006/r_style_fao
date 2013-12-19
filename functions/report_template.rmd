@@ -1,0 +1,18 @@
+FAO Report about `r data$country[1]`
+========================================================
+
+Table. Do you smoke?
+
+```{r, echo=F, results='asis'}
+rmd.table(as.data.frame(table(data$smoke)))
+```
+
+Avearage for `r data$country[1]` is `r mean(data$value)`.
+
+
+Draw a picture.
+
+```{r fig.width=7, fig.height=6, echo=FALSE}
+ggplot(data, aes(value)) + geom_density() + ggtitle(data$country[1])
+```
+
