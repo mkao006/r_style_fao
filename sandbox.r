@@ -168,11 +168,11 @@ y <- sws_query(dbquery=q)
 library(reshape2)
 dcast(y, ...~ELENAME, value.var='NUM_50')
 
-pairs <- list('11'=866, '41'=867)
+
 as.numeric(names(pairs)[[1]])
 pairs[[1]]
 
-
+pairs <- list(c(11, 866), c(41, 867), c(51, 882))
 y <- sws_query(symb=F, melted=T, area=c(33, 79), year=1997:2000, pairs=pairs)
 y <- y[, c('elename', 'areaname', 'year', 'value')]
 y <- dcast(y, ... ~ elename, value.var = 'value')

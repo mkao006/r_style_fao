@@ -150,8 +150,9 @@ AREA.AREA = TS_ICS_WORK_YR.AREA"
     if(!missing(pairs)) {
       require(plyr)
       pairs <- llply(seq_len(length(pairs)), function(x) {
-        item <- pairs[[x]]
-        ele <- names(pairs)[x]
+        ele <- pairs[[x]][1]
+        item <- pairs[[x]][2]
+        
         str_c('(', dbmain, '.ELE=', ele, ' AND ', dbmain, '.ITEM=', item, ')')
       })
       pairs <- str_c(unlist(pairs), collapse=' OR ')
@@ -256,6 +257,13 @@ AREA.AREA = TS_ICS_WORK_YR.AREA"
     
 
 
+  }
+  
+  if(!missing(pairs)) {
+    dboutput <- dboutput[, c('elename', 'areaname', 'year', 'value')]
+    require(reshape2)
+    dboutput <- dcast(dboutput, ... ~ elename, value.var = 'value')
+    names(dboutput) <- make.names(names(dboutput))
   }
     
   dboutput
