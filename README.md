@@ -77,6 +77,22 @@ It is generally better to split up the function, each with their own
 documentation and do just one thing. You can then have a wrapper
 function to wrap everything up if you would like.
 
+Functions should also have simple statements at the beginning of their
+execution that ensure that passed values are valid.  For example, if
+a function takes three arguments a, b, and c and adds them together,
+then the function should ensure a, b, and c are all numeric before
+proceeding.  These checks can easily be implemented via the stopifnot
+R function which returns an error if the argument is not true.
+Custom error messages can be implemented via:
+if(condition) stop("<message>").
+
+Tests should also be implemented to verify that functions work as
+expected.  A "tests" directory should be created in the same directory
+as the package directory, and test files should be placed in the tests
+directory.  These files should be named "test_..." and contain simple
+examples of use cases for these functions.  The testthat package can
+be used to easily automate these tests.  The stringr package has many
+good examples of what these test files should look like.
 
 ### Analysis
 
